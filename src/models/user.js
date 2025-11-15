@@ -3,16 +3,18 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: true
+        required: true,
+        minlength: 3,
     },
     lastName: {
         type: String,
-        required: true
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true,
     },
     password: {
         type: String,
@@ -20,13 +22,31 @@ const userSchema = new mongoose.Schema({
     },
     age: {
         type: Number,
-        required: true
+        min: 18,
     },
     gender: {
         type: String,
-        required: true
+        validate: {
+            validator: (gender) => gender === 'male' || gender === 'female',
+            message: 'Gender must be either male or female.'
+        }
+    },
+    profilePicture: {
+        type: String,
+        default: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
+    },
+    about: {
+        type: String,
+        default: 'This user has not updated their profile yet.'
+    },
+    skills: {
+        type: [String],
+    },
+},
+    {
+        timestamps: true
     }
-});
+);
 
 const User = mongoose.model('User', userSchema);
 

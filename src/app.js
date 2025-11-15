@@ -1,12 +1,13 @@
 const express = require('express');
 const connectDB = require('./config/db');
+const User = require('./models/user');
 
 const app = express();
 app.use(express.json());
 
 
 
-const User = require('./models/user');
+
 
 connectDB().then(() => {
     console.log('MongoDB connected');
@@ -30,11 +31,56 @@ app.post("/signup", async (req, res) => {
         gender: req.body.gender
     }
     const user = new User(userObj);
-    try {
-        await user.save();
+    user.save().then(() => {
         res.send('User signed up successfully');
+    }).catch((err) => {
+        res.status(400).send('Error signing up user', err.message);
+    })
+})
+
+app.get("/users", async (req, res) => {
+    try {
+        const users = await User.find();
+        res.send(users);
     } catch (err) {
-        res.status(400).send('Error signing up user');
+        res.status(400).send('Error fetching users', err);
+    }
+})
+
+app.get("/user", async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        res.send(user);
+    } catch (err) {
+        res.status(400).send('Error fetching user', err);
+    }
+})
+
+
+app.patch("/user", async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate({ _id: req.body.userId }, req.body);
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        res.send('User updated successfully');
+    } catch (err) {
+        res.status(400).send('Error updating user', err);
+    }
+})
+
+app.delete("/user", async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.body.userId);
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        res.send('User deleted successfully');
+    } catch (err) {
+        res.status(400).send('Error deleting user', err);
     }
 })
 
