@@ -15,6 +15,17 @@ const validateSIgnUp = (req) => {
     }
 }
 
-module.exports = {
-    validateSIgnUp
+const validateProfileEdit = (req) => {
+    const allowEdits = ['firstName', 'lastName', 'age', 'gender', 'about', 'skills', 'profilePicture'];
+    const edits = Object.keys(req.body);
+    const isValidEdit = edits.every((edit) => allowEdits.includes(edit));
+    if (!isValidEdit) {
+        throw new Error('Invalid edits!');
+    }
+    
 }
+
+module.exports = {
+    validateSIgnUp,
+    validateProfileEdit
+};
