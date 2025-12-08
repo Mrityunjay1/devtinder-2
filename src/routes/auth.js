@@ -43,7 +43,7 @@ authRouter.post("/login", async (req, res) => {
             return res.status(401).send('Invalid password');
         }
         const token = await user.getJWT();
-        res.cookie('token', token, { httpOnly: true ,});
+        res.cookie('token', token, { httpOnly: true , secure: isProd, sameSite: isProd ? 'none' : 'lax' });
         res.send(user);
     } catch (err) {
         res.status(400).send(err.message);
