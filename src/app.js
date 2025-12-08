@@ -15,9 +15,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
     {
-        origin: 'http://localhost:5173',
+        origin:['http://localhost:5173','https://devtinder-fe-sable.vercel.app/'],
         credentials: true,
-    }
+    },
+    
 ))
 app.set('trust proxy', 1); // trust first proxy
 
