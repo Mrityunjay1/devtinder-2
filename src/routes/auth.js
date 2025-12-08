@@ -25,11 +25,10 @@ authRouter.post("/signup", async (req, res) => {
         gender: req.body.gender ? req.body.gender.toLowerCase() : undefined
     }
     const user = new User(userObj);
-    user.save().then(() => {
-        res.send('User signed up successfully');
-    }).catch((err) => {
-        res.status(400).send(err.message);
-    })
+    const savedUser = await user.save();
+    const token = await savedUser.getJWT();
+    res.cookie('token', token, { httpOnly: true ,});
+    res.status(201).send(savedUser);
 })
 authRouter.post("/login", async (req, res) => {
     try {
@@ -44,7 +43,7 @@ authRouter.post("/login", async (req, res) => {
         }
         const token = await user.getJWT();
         res.cookie('token', token, { httpOnly: true ,});
-        res.send('User logged in successfully');
+        res.send(user);
     } catch (err) {
         res.status(400).send(err.message);
     }

@@ -1,17 +1,19 @@
-const moongoose = require('mongoose');
-const connectionRequestSchema = new moongoose.Schema({
+const mongoose = require('mongoose');
+const connectionRequestSchema = new mongoose.Schema({
     fromUserId: {
-        type: moongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     toUserId: {
-        type: moongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     status: {
         type: String,
         enum:{ 
-            values: ['ignore', 'interested', 'rejected','accepted'], 
+            values: [ 'ignore', 'interested', 'rejected','accepted'], 
             message: '{VALUE} is not supported'
         },
         default: 'pending'
@@ -29,4 +31,4 @@ connectionRequestSchema.pre('save', async function (next) {
     next();
 });
 
-module.exports = moongoose.model('ConnectionRequest', connectionRequestSchema);
+module.exports = mongoose.model('ConnectionRequest', connectionRequestSchema);
