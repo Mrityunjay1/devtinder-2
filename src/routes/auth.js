@@ -4,6 +4,7 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 
 const authRouter = express.Router();
+const isProd = process.env.NODE_ENV === 'production';
 
 authRouter.post("/signup", async (req, res) => {
     try {
@@ -27,7 +28,7 @@ authRouter.post("/signup", async (req, res) => {
     const user = new User(userObj);
     const savedUser = await user.save();
     const token = await savedUser.getJWT();
-    res.cookie('token', token, { httpOnly: true ,});
+    res.cookie('token', token, { httpOnly: true , secure: isProd, sameSite: isProd ? 'none' : 'lax' });
     res.status(201).send(savedUser);
 })
 authRouter.post("/login", async (req, res) => {
